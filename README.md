@@ -5,7 +5,7 @@ sell your catch to Joe at the fish stand, and spend it on better gear at Marta's
 real-time tropical island and ocean: swim the reef, drive the boat out to deep water, and watch a humpback
 breach. It runs directly on WebGPU and WGSL with its own small rendering engine, no framework.
 
-**Play it:** https://dgreenheck.github.io/tidewater/
+**Play this mobile-friendly fork:** https://makerxyz.github.io/tidewater/ (original: https://dgreenheck.github.io/tidewater/)
 
 ![Fishing off the pier at golden hour](docs/screenshot.jpg)
 
