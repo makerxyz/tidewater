@@ -251,7 +251,7 @@ export class AppUI {
 		if ( app.freeCam ) {
 
 			ui.setMode( 'Free camera' );
-			ui.setPrompt( 'F', 'Walk' );
+			ui.setPrompt( matchMedia( '(pointer: coarse)' ).matches ? 'More' : 'F', 'Walk' );
 			ui.setBoatGauges( { visible: false } );
 			ui.setDepth( { visible: false } );
 			return;
@@ -262,7 +262,12 @@ export class AppUI {
 			: p.mode === 'deck' ? 'On deck'
 			: p.mode === 'swim' ? ( app.camera.position.y < ( app.cameraWaterHeight ?? 0 ) - 0.3 ? 'Diving' : 'Swimming' ) : 'Walking';
 		ui.setMode( mode );
-		if ( p.prompt ) ui.setPrompt( p.prompt.key, p.prompt.text );
+		if ( p.prompt ) {
+
+			const key = matchMedia( '(pointer: coarse)' ).matches ? ( { E: 'Use', R: 'Rod', F: 'More', LMB: 'Cast', RMB: 'In' }[ p.prompt.key ] || p.prompt.key ) : p.prompt.key;
+			ui.setPrompt( key, p.prompt.text );
+
+		}
 		else ui.setPrompt( null );
 
 		const b = app.boatCtl;

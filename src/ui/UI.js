@@ -2132,11 +2132,19 @@ export class UI {
 				<header class="tw-help-head">
 					<div>
 						<h2 id="tw-help-title">Controls</h2>
-						<p>Click the view to capture the mouse. Esc releases it.</p>
+					<p class="tw-help-desktop">Click the view to capture the mouse. Esc releases it.</p>
+					<p class="tw-help-touch">Drag the left stick to move and swipe the view to look around.</p>
 					</div>
 					<button type="button" class="tw-icon-btn tw-help-close" aria-label="Close" data-tip="Close (F1)">${ icon( 'close' ) }</button>
 				</header>
-				<div class="tw-help-grid">
+			<div class="tw-help-grid">
+				<section class="tw-help-touch">
+					<h3>Touch play</h3>
+					${ row( 'Stick', 'Move or steer the boat' ) }
+					${ row( 'Swipe', 'Look around with a free finger' ) }
+					${ row( 'Cast', 'Hold to wind up, release to cast; tap to strike; hold to reel' ) }
+					${ row( 'More', 'Cooler, boat view, settings and other controls' ) }
+				</section>
 					<section>
 						<h3>Move</h3>
 						${ row( wasd, 'Move' ) }
@@ -2189,7 +2197,8 @@ export class UI {
 			<div class="tw-start-inner">
 				${ brandMark( 'tw-start-mark' ) }
 				<div class="tw-start-title">TIDEWATER</div>
-				<button type="button" class="tw-start-cta"><span class="tw-start-pulse" aria-hidden="true"></span>${ icon( 'mouse' ) }<span>Click to explore</span></button>
+				<button type="button" class="tw-start-cta"><span class="tw-start-pulse" aria-hidden="true"></span>${ icon( 'mouse' ) }<span class="tw-start-desktop">Click to explore</span><span class="tw-start-touch">Tap to explore</span></button>
+				<div class="tw-start-touch tw-start-touch-hint">Left stick to move · swipe to look · tap to fish</div>
 				<div class="tw-start-keys">
 					<span><span class="tw-wasd"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>Move</span>
 					<span><kbd class="tw-kbd-ico">${ icon( 'mouse' ) }</kbd>Look</span>

@@ -94,6 +94,10 @@ breach. It runs directly on WebGPU and WGSL with its own small rendering engine,
 | P | Photo mode |
 | F1 or ? | All controls |
 
+### Phone and tablet controls
+
+Drag the left stick to move or steer, and swipe anywhere on the game view with another finger to look around. The right buttons handle **Rod**, **Use**, **Run**, **Up**, **Dive**, **In** (retrieve an empty line), and **Cast**. Hold Cast to wind up, release to cast, tap Strike when the bobber goes under, and hold Reel during a fight. **More** opens the cooler, boat view, free camera, flashlight, time, mute, settings, help, and photo mode. A catch card has a Continue button. The controls disappear while a menu or guide is open.
+
 ### Fishing
 
 Walk the deck of the boat while it drifts, or fish from the pier and the beach. Cast, wait for the bobber

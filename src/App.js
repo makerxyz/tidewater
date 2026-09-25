@@ -357,8 +357,9 @@ fn terrainWetness( xz: vec2f, h: f32 ) -> vec2f {
 		}
 
 		this.boatCtl.onSlam = ( s ) => this.audio && this.audio.hullSlap( s );
-		engine.domElement.addEventListener( 'click', () => {
+		engine.domElement.addEventListener( 'click', ( e ) => {
 
+			if ( e.pointerType === 'touch' ) return;
 			if ( window.__ui && window.__ui.isPointerOverUI ) return;
 			this.input.requestLock();
 			if ( this.audio ) this.audio.resume();
@@ -602,6 +603,7 @@ fn terrainWetness( xz: vec2f, h: f32 ) -> vec2f {
 
 	_frame( dt ) {
 
+		if ( this.mobileControls ) this.mobileControls.update();
 		GPU.beginFrame();
 		FrameUniforms.fields.frameIndex.value = GPU.frame;
 		const s = this.settings;

@@ -28,6 +28,7 @@ export class Game {
 	constructor( app ) {
 
 		this.app = app;
+		this.touch = typeof matchMedia === 'function' && matchMedia( '(pointer: coarse)' ).matches;
 		this.state = new GameState();
 		this.state.load();
 		this.rod = new FishingRod( { scene: app.scene, camera: app.camera, query: app.query, terrain: app.terrainData, audio: app.audio } );
@@ -159,7 +160,7 @@ export class Game {
 
 			rod.equip( ! rod.equipped );
 			if ( ! rod.equipped ) this.cancelLine();
-			this.toast( rod.equipped ? 'Rod out · hold left mouse to cast' : 'Rod away', 1600 );
+			this.toast( rod.equipped ? ( this.touch ? 'Rod out · hold Cast to wind up' : 'Rod out · hold left mouse to cast' ) : 'Rod away', 1600 );
 
 		}
 
@@ -180,8 +181,11 @@ export class Game {
 		}
 
 		// mouse edges (the left button also looks around while the pointer isn't captured)
-		const lmb = inp.mouseDown && inp.enabled, rmb = inp.rightDown && inp.enabled;
-		const lDown = lmb && ! this._lmb, lUp = ! lmb && this._lmb, rDown = rmb && ! this._rmb;
+		const lmb = ( inp.mouseDown || inp.virtualMouseDown ) && inp.enabled;
+		const rmb = ( inp.rightDown || inp.virtualRightDown ) && inp.enabled;
+		const lDown = ( lmb && ! this._lmb ) || inp.virtualMousePressed;
+		const lUp = ( ! lmb && this._lmb ) || inp.virtualMouseReleased;
+		const rDown = ( rmb && ! this._rmb ) || inp.virtualRightPressed;
 		this._lmb = lmb;
 		this._rmb = rmb;
 		const panelOpen = this.hud && ( this.hud.invOpen || this.hud.standOpen );
@@ -189,7 +193,7 @@ export class Game {
 		if ( rod.equipped && ! panelOpen ) {
 
 			if ( rod.state === 'idle' && lDown ) rod.startWindup();
-			else if ( rod.state === 'windup' && lUp ) rod.release();
+			if ( rod.state === 'windup' && lUp ) rod.release();
 			else if ( rod.state === 'floating' ) {
 
 				if ( lDown ) this.strike();
@@ -295,6 +299,20 @@ export class Game {
 		}
 
 		const b = this.bite;
+		if ( this.touch ) switch ( rod.state ) {
+
+			case 'idle': return { key: 'Cast', text: 'Hold to wind up, release to cast · Rod puts it away' };
+			case 'windup': return { key: 'Cast', text: 'Release to cast (hold longer to cast farther)' };
+			case 'floating':
+				if ( b && b.phase === 'take' ) return { key: 'Strike', text: 'Strike now!' };
+				if ( b && b.phase === 'nibble' ) return { key: '…', text: 'Wait until the bobber is pulled under' };
+				return { key: 'In', text: 'Waiting for a bite · tap In to retrieve the line' };
+			case 'retrieving': return { key: 'In', text: 'Reeling in' };
+			case 'fighting': return this.fight && this.fight.tension > this.fight.band[ 1 ]
+				? { key: 'Reel', text: 'Too much tension · let go!' }
+				: { key: 'Reel', text: 'Hold to reel · let go when tension turns red' };
+
+		}
 		switch ( rod.state ) {
 
 			case 'idle': return { key: 'LMB', text: 'Hold to wind up, release to cast   ·   R  put the rod away' };

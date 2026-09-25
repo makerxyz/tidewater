@@ -341,6 +341,13 @@ body {
 .loader-tip:nth-child(7) { animation-delay: 35.2s; }
 .loader-tip:nth-child(8) { animation-delay: 41.2s; }
 
+.loader-tip-touch { display: none; }
+
+@media (pointer: coarse) {
+	.loader-tip:not(.loader-tip-touch) { display: none; }
+	.loader-tip-touch { display: block; opacity: 1; animation: none; }
+}
+
 @keyframes tw-kenburns {
 	from { transform: scale(1.06) translate3d(0, 0, 0); }
 	to { transform: scale(1.14) translate3d(-1.6%, -0.8%, 0); }
@@ -2605,6 +2612,175 @@ body {
 	.tw-panel {
 		left: var(--tw-3);
 		width: auto;
+	}
+
+}
+
+/* Touch play: left thumb moves, a free finger on the view looks around. */
+.tw-mobile-controls {
+	display: none;
+}
+
+.tw-help-touch {
+	display: none;
+}
+
+.tw-start-touch {
+	display: none;
+}
+
+@media (pointer: coarse) {
+
+	.tw-help-touch {
+		display: block;
+	}
+
+	.tw-help-desktop {
+		display: none;
+	}
+
+	.tw-start-touch {
+		display: block;
+	}
+
+	.tw-start-desktop,
+	.tw-start-keys,
+	.tw-start-cta .tw-ico {
+		display: none;
+	}
+
+	.tw-start-touch-hint {
+		margin-top: 14px;
+		color: var(--tw-ink-2);
+		font-size: 13px;
+		text-align: center;
+	}
+
+	.tw-mobile-controls:not([hidden]) {
+		position: absolute;
+		inset: 0;
+		display: block;
+		pointer-events: none;
+		touch-action: auto;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	.tw-mobile-stick {
+		position: absolute;
+		left: max(14px, env(safe-area-inset-left));
+		bottom: max(18px, env(safe-area-inset-bottom));
+		width: clamp(104px, 28vw, 130px);
+		aspect-ratio: 1;
+		border-radius: 50%;
+		pointer-events: auto;
+		touch-action: none;
+	}
+
+	.tw-mobile-stick-ring {
+		position: absolute;
+		inset: 0;
+		border: 1px solid rgba(180, 245, 240, 0.5);
+		border-radius: 50%;
+		background: rgba(7, 22, 29, 0.32);
+		box-shadow: inset 0 0 20px rgba(95, 227, 212, 0.08), 0 4px 20px rgba(0, 0, 0, 0.24);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+	}
+
+	.tw-mobile-stick-knob {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 38%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: rgba(140, 238, 228, 0.72);
+		box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7), 0 3px 12px rgba(0, 0, 0, 0.36);
+		margin: -19% 0 0 -19%;
+		pointer-events: none;
+	}
+
+	.tw-mobile-actions {
+		position: absolute;
+		right: max(14px, env(safe-area-inset-right));
+		bottom: max(18px, env(safe-area-inset-bottom));
+		display: grid;
+		grid-template-columns: repeat(3, clamp(49px, 13.2vw, 58px));
+		grid-auto-rows: clamp(49px, 13.2vw, 58px);
+		gap: 7px;
+		pointer-events: auto;
+	}
+
+	.tw-mobile-button {
+		min-width: 0;
+		min-height: 0;
+		padding: 3px;
+		border: 1px solid rgba(182, 244, 238, 0.46);
+		border-radius: 16px;
+		background: rgba(7, 22, 29, 0.66);
+		color: #efffff;
+		font: 600 12px/1.15 var(--tw-font);
+		letter-spacing: 0.01em;
+		text-align: center;
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		pointer-events: auto;
+		touch-action: none;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	.tw-mobile-button.is-held,
+	.tw-mobile-button:active {
+		background: rgba(95, 227, 212, 0.68);
+		color: #07171b;
+	}
+
+	.tw-mobile-button:disabled {
+		opacity: 0.42;
+	}
+
+	.tw-mobile-button[hidden],
+	.tw-mobile-menu[hidden] {
+		display: none;
+	}
+
+	.tw-mobile-primary {
+		grid-column: span 2;
+		background: rgba(39, 139, 132, 0.76);
+		font-size: 14px;
+	}
+
+	.tw-mobile-menu {
+		position: absolute;
+		right: max(14px, env(safe-area-inset-right));
+		bottom: calc(max(18px, env(safe-area-inset-bottom)) + 3 * clamp(49px, 13.2vw, 58px) + 35px);
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 7px;
+		width: min(252px, 65vw);
+		max-height: min(360px, 47dvh, calc(100dvh - max(18px, env(safe-area-inset-bottom)) - 3 * clamp(49px, 13.2vw, 58px) - 47px));
+		overflow-y: auto;
+		touch-action: pan-y;
+		padding: 9px;
+		border: 1px solid rgba(170, 215, 235, 0.22);
+		border-radius: 18px;
+		background: rgba(7, 17, 25, 0.86);
+		pointer-events: auto;
+	}
+
+	.tw-mobile-menu .tw-mobile-button {
+		min-height: 44px;
+	}
+
+	.tw-prompt {
+		bottom: calc(max(18px, env(safe-area-inset-bottom)) + 3 * clamp(49px, 13.2vw, 58px) + 36px);
+		font-size: 11px;
+	}
+
+	.tw-boat {
+		bottom: calc(max(18px, env(safe-area-inset-bottom)) + clamp(104px, 28vw, 130px) + 10px);
 	}
 
 }
