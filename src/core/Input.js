@@ -1,15 +1,21 @@
-// Keyboard / mouse input with pointer lock support.
+// Keyboard, mouse and virtual touch input with pointer lock support.
 export class Input {
 
 	constructor( dom ) {
 
 		this.dom = dom;
 		this.keys = new Set();
+		this.virtualKeys = new Set();
 		this.pressed = new Set();
 		this.look = { x: 0, y: 0 };
 		this.wheel = 0;
 		this.mouseDown = false;
 		this.rightDown = false;
+		this.virtualMouseDown = false;
+		this.virtualRightDown = false;
+		this.virtualMousePressed = false;
+		this.virtualMouseReleased = false;
+		this.virtualRightPressed = false;
 		this.locked = false;
 		this.enabled = true;
 
@@ -22,7 +28,12 @@ export class Input {
 
 		} );
 		window.addEventListener( 'keyup', ( e ) => this.keys.delete( e.code ) );
-		window.addEventListener( 'blur', () => this.keys.clear() );
+		window.addEventListener( 'blur', () => {
+
+			this.keys.clear();
+			this.clearVirtual();
+
+		} );
 
 		dom.addEventListener( 'mousedown', ( e ) => {
 
@@ -53,6 +64,29 @@ export class Input {
 			e.preventDefault();
 
 		}, { passive: false } );
+		// A free finger on the view looks around. UI controls capture their own pointers.
+		let touchId = null, lastX = 0, lastY = 0;
+		dom.addEventListener( 'pointerdown', ( e ) => {
+
+			if ( e.pointerType !== 'touch' || touchId !== null ) return;
+			touchId = e.pointerId;
+			lastX = e.clientX;
+			lastY = e.clientY;
+			dom.setPointerCapture( e.pointerId );
+
+		} );
+		dom.addEventListener( 'pointermove', ( e ) => {
+
+			if ( e.pointerId !== touchId ) return;
+			this.look.x += ( e.clientX - lastX ) * 1.4;
+			this.look.y += ( e.clientY - lastY ) * 1.4;
+			lastX = e.clientX;
+			lastY = e.clientY;
+
+		} );
+		const endTouch = ( e ) => { if ( e.pointerId === touchId ) touchId = null; };
+		dom.addEventListener( 'pointerup', endTouch );
+		dom.addEventListener( 'pointercancel', endTouch );
 
 		document.addEventListener( 'pointerlockchange', () => {
 
@@ -70,7 +104,7 @@ export class Input {
 
 	down( code ) {
 
-		return this.enabled && this.keys.has( code );
+		return this.enabled && ( this.keys.has( code ) || this.virtualKeys.has( code ) );
 
 	}
 
@@ -78,6 +112,57 @@ export class Input {
 	hit( code ) {
 
 		return this.enabled && this.pressed.has( code );
+
+	}
+
+	pressVirtual( code ) {
+
+		if ( ! this.virtualKeys.has( code ) ) this.pressed.add( code );
+		this.virtualKeys.add( code );
+
+	}
+
+	releaseVirtual( code ) {
+
+		this.virtualKeys.delete( code );
+
+	}
+
+	pressVirtualMouse( button ) {
+
+		if ( button === 'left' ) {
+
+			if ( ! this.virtualMouseDown ) this.virtualMousePressed = true;
+			this.virtualMouseDown = true;
+
+		} else {
+
+			if ( ! this.virtualRightDown ) this.virtualRightPressed = true;
+			this.virtualRightDown = true;
+
+		}
+
+	}
+
+	releaseVirtualMouse( button ) {
+
+		if ( button === 'left' ) {
+
+			if ( this.virtualMouseDown ) this.virtualMouseReleased = true;
+			this.virtualMouseDown = false;
+
+		} else this.virtualRightDown = false;
+
+	}
+
+	clearVirtual() {
+
+		this.virtualKeys.clear();
+		this.virtualMouseDown = false;
+		this.virtualRightDown = false;
+		this.virtualMousePressed = false;
+		this.virtualMouseReleased = false;
+		this.virtualRightPressed = false;
 
 	}
 
@@ -101,6 +186,9 @@ export class Input {
 	endFrame() {
 
 		this.pressed.clear();
+		this.virtualMousePressed = false;
+		this.virtualMouseReleased = false;
+		this.virtualRightPressed = false;
 
 	}
 

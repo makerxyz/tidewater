@@ -13,7 +13,7 @@ import { CHANDLERY } from './Chandlery.js';
 const KEY = 'tidewater.guide';
 
 const CSS = /* css */`
-.gm-guide { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0; visibility: hidden;
+.gm-guide { position: absolute; z-index: 40; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0; visibility: hidden;
 	background: radial-gradient(70% 70% at 50% 50%, rgba(4, 10, 16, 0.2), rgba(4, 10, 16, 0.55));
 	transition: opacity 420ms var(--tw-ease), visibility 0s linear 420ms; }
 .gm-guide.is-on { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 420ms var(--tw-ease), visibility 0s; }
@@ -59,6 +59,7 @@ const CSS = /* css */`
 .tw-help-guide .gm-btn { flex: none; }
 @media (max-height: 860px) { .gm-coach { right: calc(var(--tw-edge) + 58 * var(--tw-u)); } }
 @media (max-width: 640px) { .tw-help-guide { flex-direction: column; align-items: flex-start; } .gm-coach { bottom: calc(var(--tw-edge) + 128 * var(--tw-u) + var(--tw-3)); } .gm-guide-row { grid-template-columns: calc(78 * var(--tw-u)) 1fr; } }
+@media (pointer: coarse) { .gm-guide-hint { display: none; } .gm-coach { bottom: calc(var(--tw-edge) + 3 * 58px + 28px); } }
 @media (prefers-reduced-motion: reduce) { .gm-guide-card, .gm-coach { transform: none !important; } }
 `;
 
@@ -100,6 +101,26 @@ const CARDS = [
 	},
 ];
 
+const TOUCH_CARDS = {
+	1: `<div class="gm-guide-list">
+		${ row( 'Rod', 'Take out the rod by the water or on the boat' ) }
+		${ row( 'Hold Cast', 'Wind up, then release to cast. Hold longer to cast farther' ) }
+		${ row( 'Strike', 'Tap when the bobber is <b>pulled under</b>' ) }
+		${ row( 'Hold Reel', 'Reel in. <b>Let go when tension turns red</b>' ) }
+		${ row( 'In', 'Bring an empty line back' ) }
+		${ row( 'More', 'Open your cooler and fish log' ) }
+	</div>`,
+	2: `<div class="gm-guide-list">
+		${ row( 'Stick', 'Move or steer; swipe the view to look around' ) }
+		${ row( 'Use', 'Board the boat, take the helm, talk to Joe and Marta' ) }
+		${ row( 'More', 'All controls, settings and this guide again' ) }
+	</div>
+	<div class="gm-guide-where">
+		<div class="is-joe"><i></i><span><b>Joe</b> · fish stand by the pier</span><em data-where="joe"></em></div>
+		<div class="is-marta"><i></i><span><b>Marta</b> · chandlery by the boathouse</span><em data-where="marta"></em></div>
+	</div>`,
+};
+
 const TIPS = {
 	rodOut: 'Hold the <b>left mouse button</b> to wind up and release to cast. Try deeper water, around the pier or over the reef.',
 	nibble: 'The bobber is dipping: something is <b>nibbling</b>. Wait until it is <b>pulled under</b>, then click to strike.',
@@ -109,6 +130,16 @@ const TIPS = {
 	boat: 'Your boat. <kbd>E</kbd> to board, <kbd>E</kbd> again at the wheel to drive (<kbd>W</kbd><kbd>S</kbd> throttle, <kbd>A</kbd><kbd>D</kbd> steer). Diesel is sold by Marta.',
 	joe: '<b>Joe</b> buys your fish. <kbd>E</kbd> to see what he will pay.',
 	marta: '<b>Marta</b> sells upgrades and diesel. <kbd>E</kbd> to see her stock.',
+};
+
+const TOUCH_TIPS = {
+	rodOut: 'Hold <b>Cast</b> to wind up, then release. Try deeper water, around the pier or over the reef.',
+	nibble: 'The bobber is dipping. Wait until it is <b>pulled under</b>, then tap <b>Strike</b>.',
+	fishOn: 'Hold <b>Reel</b>. When tension nears the <b>red</b>, let go until it settles.',
+	caught: 'Into the cooler (<b>More → Cooler & log</b>). Sell your catch to <b>Joe</b>.',
+	boat: 'Tap <b>Use</b> to board, and again at the wheel to drive. The stick steers and controls throttle.',
+	joe: '<b>Joe</b> buys your fish. Tap <b>Use</b> to see what he will pay.',
+	marta: '<b>Marta</b> sells upgrades and diesel. Tap <b>Use</b> to see her stock.',
 };
 
 const h = ( tag, cls, html ) => {
@@ -236,7 +267,7 @@ export class Guide {
 		const c = CARDS[ i ];
 		this.eyebrow.textContent = c.eyebrow;
 		this.title.textContent = c.title;
-		this.body.innerHTML = c.body;
+		this.body.innerHTML = matchMedia( '(pointer: coarse)' ).matches ? TOUCH_CARDS[ i ] || c.body : c.body;
 		this.dots.forEach( ( d, j ) => d.classList.toggle( 'is-on', j === i ) );
 		this.nextBtn.textContent = i === CARDS.length - 1 ? 'Let\'s fish' : 'Next';
 		if ( this.minimap ) this.minimap.highlight( i === CARDS.length - 1 ? [ 'joe', 'marta' ] : [] );
@@ -368,7 +399,7 @@ export class Guide {
 			this._current = id;
 			this.seen[ id ] = true;
 			this._save();
-			this.coachText.innerHTML = TIPS[ id ];
+			this.coachText.innerHTML = matchMedia( '(pointer: coarse)' ).matches ? TOUCH_TIPS[ id ] || TIPS[ id ] : TIPS[ id ];
 			this.coach.classList.add( 'is-on' );
 			this._coachT = 7.5;
 

@@ -137,6 +137,8 @@ const CSS = /* css */`
 .gm-catch-note.is-warn { color: #ff9a8a; }
 .gm-catch-foot { display: flex; align-items: center; justify-content: center; gap: var(--tw-2); margin-top: var(--tw-3); color: rgba(244, 234, 214, 0.5); font-size: var(--tw-fs-sm); }
 .gm-catch-foot kbd { font: 600 var(--tw-fs-xs) var(--tw-mono); color: #f4ead6; padding: 2px calc(6 * var(--tw-u)); border-radius: 4px; border: 1px solid rgba(244, 234, 214, 0.3); background: rgba(244, 234, 214, 0.08); }
+.gm-catch-continue { display: none; }
+@media (pointer: coarse) { .gm-catch-foot { display: none; } .gm-catch-continue { display: inline-flex; align-items: center; justify-content: center; min-width: 120px; min-height: 48px; margin-top: 10px; pointer-events: auto; } }
 .gm-catch-timer { width: calc(80 * var(--tw-u)); height: 2px; margin-left: var(--tw-2); border-radius: 2px; background: rgba(244, 234, 214, 0.15); overflow: hidden; }
 .gm-catch-timer > span { display: block; height: 100%; width: 100%; background: rgba(244, 234, 214, 0.55); transform-origin: 0 50%; }
 .gm-catch.is-on .gm-catch-timer > span { animation: gm-timer var(--gm-catch-ms, 9000ms) linear forwards; }
@@ -336,7 +338,9 @@ export class GameHUD {
 				</div>
 				${ note }
 				<div class="gm-catch-foot"><kbd>Click</kbd> or <kbd>E</kbd> to continue<span class="gm-catch-timer"><span></span></span></div>
+				<button type="button" class="gm-btn gm-catch-continue">Continue</button>
 			</div>`;
+		c.querySelector( '.gm-catch-continue' ).addEventListener( 'click', () => this.game.endLanding() );
 		// restart the entrance even when a card is already up
 		c.classList.remove( 'is-on' );
 		void c.offsetWidth;

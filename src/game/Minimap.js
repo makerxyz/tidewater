@@ -61,6 +61,7 @@ const CSS = /* css */`
 /* short windows: the settings rail (right, vertically centred) reaches down to the corner */
 @media (max-height: 860px) { .gm-map { right: calc(var(--tw-edge) + 58 * var(--tw-u)); } }
 @media (max-width: 640px) { .gm-map { width: calc(128 * var(--tw-u)); height: calc(128 * var(--tw-u)); } }
+@media (pointer: coarse) { .gm-map { top: 72px; bottom: auto; right: max(14px, env(safe-area-inset-right)); width: 96px; height: 96px; } }
 @media (prefers-reduced-motion: reduce) { .gm-mk.is-hot > i, .gm-map-fish > i { animation: none; } }
 `;
 
